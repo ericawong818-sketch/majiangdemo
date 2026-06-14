@@ -1579,7 +1579,6 @@
                     }
                 }
 
-                showToast("徹底刪除", `已完成雲端同步，雀友「${deletedName}」的所有有空日期與歷史戰績已被完全抹除！`, "success");
             } catch (err) {
                 console.error("Sync error during delete: ", err);
                 showToast("同步出錯", "部分雲端紀錄可能未能即時完成同步，建議重整網頁檢查。", "error");
