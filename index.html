@@ -515,11 +515,14 @@
 
         async function initialize() {
             try {
-                // 🚀 修復：使用系統內建的 __firebase_config 變數進行動態配置，完全替代本地外部 js
+                console.log("正在嘗試以動態模組載入外部 firebaseconfig.js...");
                 let firebaseConfig = null;
-                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                    firebaseConfig = JSON.parse(__firebase_config);
-                    console.log("成功從系統環境讀取到 __firebase_config");
+                try {
+                    const module = await import("./firebaseconfig.js");
+                    firebaseConfig = module.default;
+                    console.log("成功動態載入 firebaseconfig.js");
+                } catch (e) {
+                    console.warn("未能找到 firebaseconfig.js，程式將安全轉換至本地儲存模式。");
                 }
 
                 if (firebaseConfig && firebaseConfig.apiKey) {
@@ -527,7 +530,6 @@
                     db = getFirestore(app);
                     auth = getAuth(app);
 
-                    // 優先使用系統 Custom Token 進行登入
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
